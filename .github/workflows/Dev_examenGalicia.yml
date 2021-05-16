@@ -23,14 +23,14 @@ jobs:
       uses: docker/login-action@v1
       with:
         registry: https://index.docker.io/v1/
-        username: ${{ secrets.AzureAppService_ContainerUsername_9e71bb678f1145bf99f3804d633bfa23 }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_6a6468f4beef4737bc119a9923343bbf }}
+        username: ${{ secrets.AzureAppService_ContainerUsername_c4ec399fb97444b389af9bc950f3723a }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_ba6441f4a41a4c13a1bf2f1c65039255 }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: ${{ secrets.AzureAppService_ContainerUsername_9e71bb678f1145bf99f3804d633bfa23 }}/galiciaTest:${{ github.sha }}
+        tags: ${{ secrets.AzureAppService_ContainerUsername_c4ec399fb97444b389af9bc950f3723a }}/nahuelgalicia:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'examenGalicia'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_45c24eb01b984dc7ab546d8214430277 }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_9e71bb678f1145bf99f3804d633bfa23 }}/galiciaTest:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_c83de96ec78e4520ac5f015e7f6ac50a }}
+        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_c4ec399fb97444b389af9bc950f3723a }}/nahuelgalicia:${{ github.sha }}'
