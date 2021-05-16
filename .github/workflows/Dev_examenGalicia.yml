@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - examenGalicia
+
+on:
+  push:
+    branches:
+      - Dev
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to registry
+      uses: docker/login-action@v1
+      with:
+        registry: https://index.docker.io/v1/
+        username: ${{ secrets.AzureAppService_ContainerUsername_9e71bb678f1145bf99f3804d633bfa23 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_6a6468f4beef4737bc119a9923343bbf }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: ${{ secrets.AzureAppService_ContainerUsername_9e71bb678f1145bf99f3804d633bfa23 }}/galiciaTest:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'examenGalicia'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_45c24eb01b984dc7ab546d8214430277 }}
+        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_9e71bb678f1145bf99f3804d633bfa23 }}/galiciaTest:${{ github.sha }}'
